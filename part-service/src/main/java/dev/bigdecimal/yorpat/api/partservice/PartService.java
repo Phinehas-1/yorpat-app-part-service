@@ -1,5 +1,8 @@
 package dev.bigdecimal.yorpat.api.partservice;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,17 @@ public class PartService {
         entity.setProgramId(model.getProgramId());
         try {
             repo.save(entity);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public List<PartEntity> getParts(Long programId) throws Exception {
+        List<Long> programIdList = Arrays.asList(programId);
+        List<PartEntity> parts;
+        try {
+            parts = (List<PartEntity>)repo.findAllById(programIdList);
+            return parts;
         } catch (Exception e) {
             throw e;
         }

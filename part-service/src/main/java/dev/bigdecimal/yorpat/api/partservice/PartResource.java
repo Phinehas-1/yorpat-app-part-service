@@ -1,5 +1,7 @@
 package dev.bigdecimal.yorpat.api.partservice;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,11 +44,19 @@ public class PartResource {
         return requestErrorResponse;
     }
 
-    @GetMapping("/getParts")
-    public ResponseEntity<? extends Object> getParts() {
-        PartEntity[] parts = {};
-        if (!parts.equals(null)) {
-            return new ResponseEntity<>(parts, HttpStatus.FOUND);
+    // fetch all the available parts by program id
+    @GetMapping("/getParts/{programId}")
+    public ResponseEntity<? extends Object> getParts(@PathVariable Long programId) {
+        if (!programId.equals(null)) {
+            try {
+                List<PartEntity> parts = service.getParts(programId);
+                if (!parts.equals(null)) {
+                    return new ResponseEntity<List<PartEntity>>(parts, HttpStatus.FOUND);
+                }
+                return new ResponseEntity<String>("No part found.", HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
         return requestErrorResponse;
     }
