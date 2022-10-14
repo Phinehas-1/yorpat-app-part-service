@@ -25,7 +25,7 @@ public class PartResource {
     // create a program part
     @PostMapping("/createPart")
     public ResponseEntity<? extends Object> createPart(@RequestBody PartModel part) {
-        if (!part.equals(null) && !part.getPartId().equals(null) && !part.getProgramId().equals(null)) {
+        if (!part.equals(null) && !part.getProgramId().equals(null)) {
             try {
                 service.createPart(part);
             } catch (Exception e) {
