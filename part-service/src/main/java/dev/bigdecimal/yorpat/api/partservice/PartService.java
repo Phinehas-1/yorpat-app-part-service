@@ -2,6 +2,7 @@ package dev.bigdecimal.yorpat.api.partservice;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +28,41 @@ public class PartService {
         }
     }
 
+    @Transactional
     public List<PartEntity> getParts(Long programId) throws Exception {
         List<Long> programIdList = Arrays.asList(programId);
         List<PartEntity> parts;
         try {
-            parts = (List<PartEntity>)repo.findAllById(programIdList);
+            parts = (List<PartEntity>) repo.findAllById(programIdList);
             return parts;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public PartEntity getPartByPartId(Long partId) throws NoSuchElementException, Exception {
+        try {
+            return repo.findById(partId).orElseThrow();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public int updatePart(PartModel part) throws Exception {
+        try {
+            return repo.updatePart(part.getPartName(), part.getPartRole(), part.getProgramId(), part.getPartId());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public boolean deletePart(Long partId) throws Exception {
+        try {
+            repo.deleteById(partId);
+            return true;
         } catch (Exception e) {
             throw e;
         }
