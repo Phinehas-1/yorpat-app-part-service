@@ -26,10 +26,11 @@ public class PartService {
     @Transactional
     public void createPart(PartModel model) throws Exception {
         boolean programExists = false;
+        String APP_DOMAIN_URL = System.getenv("APP_DOMAIN_URL");
         try {
             Mono<List<ProgramModel>> responseAsList = webClient
                     .get()
-                    .uri("http://localhost:8083/programs/getAllPrograms")
+                    .uri(APP_DOMAIN_URL+"/programs/getAllPrograms")
                     .exchangeToMono(
                             response -> response.bodyToMono(new ParameterizedTypeReference<List<ProgramModel>>() {
                             }));
