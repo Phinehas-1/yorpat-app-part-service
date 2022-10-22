@@ -18,7 +18,7 @@ public class PartServiceApplication {
 	public DataSource dataSource() {
 		return DataSourceBuilder.create()
 				.driverClassName(System.getenv("DATABASE_DRIVER_CLASS"))
-				.url(System.getenv("JDBC_URL"))
+				.url(System.getenv("DATABASE_URL"))
 				.username(System.getenv("DATABASE_USER"))
 				.password(System.getenv("DATABASE_PASSWORD"))
 				.build();
