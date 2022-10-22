@@ -1,6 +1,6 @@
 package dev.bigdecimal.yorpat.api.partservice;
 
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +24,8 @@ public class PartService {
     }
 
     @Transactional
-    public void createPart(PartModel model) throws Exception {
+    public void createPart(PartModel partModel) throws Exception {
+        ProgramModel programModel = new ProgramModel();
         boolean programExists = false;
         String APP_DOMAIN_URL = System.getenv("APP_DOMAIN_URL");
         try {
@@ -36,7 +37,8 @@ public class PartService {
                             }));
             Iterator<ProgramModel> it = responseAsList.block().iterator();
             while (it.hasNext()) {
-                if (model.getProgramId().equals(it.next().getProgramId())) {
+                programModel = it.next();
+                if (partModel.getProgramId().equals(programModel.getProgramId())) {
                     programExists = true;
                     break;
                 }
@@ -46,12 +48,14 @@ public class PartService {
         }
 
         if (!programExists) {
-            throw new NoSuchElementException("There is no such program with id of " + model.getProgramId());
+            throw new NoSuchElementException("There is no such program with id of " + partModel.getProgramId());
         }
         PartEntity entity = new PartEntity();
-        entity.setPartName(model.getPartName());
-        entity.setPartRole(model.getPartRole());
-        entity.setProgramId(model.getProgramId());
+        entity.setPartName(partModel.getPartName());
+        entity.setPartRole(partModel.getPartRole());
+        entity.setProgramId(programModel.getProgramId());
+        entity.setProgramName(programModel.getProgramName());
+        entity.setProgramDate(Date.valueOf(programModel.getProgramDate()));
         try {
             repo.save(entity);
         } catch (Exception e) {
