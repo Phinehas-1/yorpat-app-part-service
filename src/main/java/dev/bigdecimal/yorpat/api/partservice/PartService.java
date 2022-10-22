@@ -18,6 +18,7 @@ public class PartService {
     private final PartRepo repo;
     private final WebClient webClient = WebClient.builder()
             .build();
+    private final String PROGAM_SERVICE_API_DOMAIN = System.getenv("PROGAM_SERVICE_API_DOMAIN");
 
     public PartService(PartRepo repo) {
         this.repo = repo;
@@ -27,11 +28,10 @@ public class PartService {
     public void createPart(PartModel partModel) throws Exception {
         ProgramModel programModel = new ProgramModel();
         boolean programExists = false;
-        String APP_DOMAIN_URL = System.getenv("APP_DOMAIN_URL");
         try {
             Mono<List<ProgramModel>> responseAsList = webClient
                     .get()
-                    .uri(APP_DOMAIN_URL+"/programs/getAllPrograms")
+                    .uri(PROGAM_SERVICE_API_DOMAIN + "/programs/getAllPrograms")
                     .exchangeToMono(
                             response -> response.bodyToMono(new ParameterizedTypeReference<List<ProgramModel>>() {
                             }));
@@ -85,9 +85,27 @@ public class PartService {
     }
 
     @Transactional
-    public int updatePart(PartModel part) throws Exception {
+    public int updatePart(PartModel partModel) throws Exception {
+        ProgramModel programModel = new ProgramModel();
         try {
-            return repo.updatePart(part.getPartName(), part.getPartRole(), part.getProgramId(), part.getPartId());
+            Mono<ProgramModel> responseAsProgramModel = webClient
+                    .get()
+                    .uri(PROGAM_SERVICE_API_DOMAIN
+                            + "/programs/getProgram/" + partModel.getProgramId())
+                    .exchangeToMono(
+                            response -> response.bodyToMono(ProgramModel.class));
+            programModel = responseAsProgramModel.block();
+        } catch (Exception e) {
+            throw e;
+        }
+        try {
+            if (!programModel.getProgramId().equals(null)) {
+                return repo.updatePart(partModel.getPartName(), partModel.getPartRole(), partModel.getProgramId(),
+                        programModel.getProgramName(), Date.valueOf(
+                                programModel.getProgramDate()),
+                        partModel.getPartId());
+            }
+            throw new IllegalAccessException("Valid program id required");
         } catch (Exception e) {
             throw e;
         }
