@@ -1,5 +1,8 @@
 package dev.bigdecimal.yorpat.api.partservice;
 
+import java.sql.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,4 +21,7 @@ public class PartEntity {
     private String partName;
     private String partRole;
     private Long programId;
+    @Column(name = "programDesc")
+    private String programName;
+    private Date programDate;
 }
