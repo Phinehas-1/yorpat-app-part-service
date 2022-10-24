@@ -1,7 +1,7 @@
 package dev.bigdecimal.yorpat.api.partservice;
 
 import java.sql.Date;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -63,12 +63,23 @@ public class PartService {
         }
     }
 
+    // @Transactional
+    // public List<PartEntity> getParts(Long programId) throws Exception {
+    //     List<Long> programIdList = Arrays.asList(programId);
+    //     List<PartEntity> parts;
+    //     try {
+    //         parts = (List<PartEntity>) repo.findAllById(programIdList);
+    //         return parts;
+    //     } catch (Exception e) {
+    //         throw e;
+    //     }
+    // }
+
     @Transactional
-    public List<PartEntity> getParts(Long programId) throws Exception {
-        List<Long> programIdList = Arrays.asList(programId);
+    public List<PartEntity> getPartsByProgramId(Long programId) throws Exception {
         List<PartEntity> parts;
         try {
-            parts = (List<PartEntity>) repo.findAllById(programIdList);
+            parts = repo.getPartsByProgramId(programId);
             return parts;
         } catch (Exception e) {
             throw e;
@@ -116,6 +127,20 @@ public class PartService {
         try {
             repo.deleteById(partId);
             return true;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public List<PartEntity> getAllParts() {
+        List<PartEntity> parts = new ArrayList<>();
+        try {
+            Iterator<PartEntity> it = repo.findAll().iterator();
+            while (it.hasNext()) {
+                parts.add(it.next());
+            }
+            return parts;
         } catch (Exception e) {
             throw e;
         }
