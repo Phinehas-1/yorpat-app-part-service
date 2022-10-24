@@ -15,6 +15,6 @@ public interface PartRepo extends CrudRepository<PartEntity, Long> {
             @Param("programId") Long programId, @Param("programName") String programName,
             @Param("programDate") Date programDate, @Param("partId") Long partId);
 
-    @Query(value = "SELECT PartEntity p WHERE p.programId = :programId")
+    @Query(value = "SELECT p FROM PartEntity p WHERE p.programId = :programId")
     public List<PartEntity> getPartsByProgramId(@Param("programId") Long programId);
 }
