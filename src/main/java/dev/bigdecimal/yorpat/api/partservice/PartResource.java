@@ -24,7 +24,7 @@ public class PartResource {
         this.service = service;
     }
 
-    // create a program part
+    // create a part
     @PostMapping("/createPart")
     public ResponseEntity<? extends Object> createPart(@RequestBody PartModel part) {
         if (!part.equals(null) && !part.getProgramId().equals(null)) {
@@ -38,9 +38,23 @@ public class PartResource {
         return requestErrorResponse;
     }
 
-    // fetch a program part by its part id
-    @GetMapping("/getPart/{partId}")
-    public ResponseEntity<? extends Object> getPart(@PathVariable Long partId) {
+    // fetch all the available parts
+    @GetMapping("/getAllParts")
+    public ResponseEntity<? extends Object> getAllParts() {
+        try {
+            List<PartEntity> parts = service.getAllParts();
+            if (!parts.equals(null)) {
+                return new ResponseEntity<List<PartEntity>>(parts, HttpStatus.FOUND);
+            }
+            return new ResponseEntity<String>("No part found.", HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // fetch a part by its part id
+    @GetMapping("/getPartByPartId/{partId}")
+    public ResponseEntity<? extends Object> getPartByPartId(@PathVariable Long partId) {
         if (!partId.equals(null)) {
             try {
                 PartEntity part = service.getPartByPartId(partId);
@@ -53,11 +67,11 @@ public class PartResource {
     }
 
     // fetch all the available parts by program id
-    @GetMapping("/getParts/{programId}")
-    public ResponseEntity<? extends Object> getParts(@PathVariable Long programId) {
+    @GetMapping("/getPartsByProgramId/{programId}")
+    public ResponseEntity<? extends Object> getPartsByProgramId(@PathVariable Long programId) {
         if (!programId.equals(null)) {
             try {
-                List<PartEntity> parts = service.getParts(programId);
+                List<PartEntity> parts = service.getPartsByProgramId(programId);
                 if (!parts.equals(null)) {
                     return new ResponseEntity<List<PartEntity>>(parts, HttpStatus.FOUND);
                 }
@@ -85,7 +99,7 @@ public class PartResource {
     }
 
     // delete a program part
-    @DeleteMapping("/removePart/{partId}")
+    @DeleteMapping("/removePartByPartId/{partId}")
     public ResponseEntity<? extends Object> deletePart(@PathVariable Long partId) {
         if (!partId.equals(null)) {
             try {
